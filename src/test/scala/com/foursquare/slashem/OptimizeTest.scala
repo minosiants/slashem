@@ -1,33 +1,10 @@
 package com.foursquare.slashem
-import com.foursquare.slashem._
 
-import com.twitter.util.Duration
-
-import org.bson.types.ObjectId
+import org.junit.Assert
 import org.junit.Test
-import org.junit._
+import org.specs2.mutable.Specification
 
-import org.scalacheck._
-import org.scalacheck.Gen._
-import org.scalacheck.Arbitrary.arbitrary
-
-import org.specs.SpecsMatchers
-import org.specs.matcher.ScalaCheckMatchers
-
-import org.elasticsearch.node.NodeBuilder._
-import org.elasticsearch.node.Node
-import org.elasticsearch.client.Requests;
-import org.elasticsearch.common.xcontent.XContentFactory._;
-
-import java.util.concurrent.TimeUnit
-import java.util.UUID
-
-import scalaj.collection.Imports._
-
-import com.twitter.util.{Duration, ExecutorServiceFuturePool, Future, FuturePool, FutureTask, Throw, TimeoutException}
-import java.util.concurrent.{Executors, ExecutorService}
-
-class OptimizeTest extends SpecsMatchers with ScalaCheckMatchers {
+class OptimizeTest extends  Specification {
 
   @Test
   def testProduceCorrectListfieldFilterAny {

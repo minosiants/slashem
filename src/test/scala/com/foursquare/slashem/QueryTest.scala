@@ -1,21 +1,20 @@
 package com.foursquare.slashem
 
-import com.foursquare.slashem._
-import com.twitter.util.Duration
 import java.util.concurrent.TimeUnit
+
 import org.bson.types.ObjectId
+import org.joda.time.DateTime
+import org.joda.time.DateTimeZone
+import org.junit.Assert
 import org.junit.Test
-import org.junit._
+import org.specs2.mutable.Specification
 
-import org.scalacheck._
-import org.scalacheck.Gen._
-import org.scalacheck.Arbitrary.arbitrary
-
-import org.specs.SpecsMatchers
-import org.specs.matcher.ScalaCheckMatchers
+import com.twitter.util.Duration
 
 
-class QueryTest extends SpecsMatchers with ScalaCheckMatchers {
+
+
+class QueryTest extends  Specification {
   
   @Test
   def testStartEndExecuteQuery {

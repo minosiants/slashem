@@ -1,20 +1,20 @@
 package com.foursquare.slashem
 
-import com.foursquare.slashem._
-
-import org.bson.types.ObjectId
+import java.io.PrintWriter
+import java.io.Writer
+import scala.io.Source
+import scala.tools.nsc.Interpreter
+import scala.tools.nsc.Settings
+import scala.tools.nsc.interpreter.Results.Error
+import scala.tools.nsc.interpreter.Results.Incomplete
+import scala.tools.nsc.interpreter.Results.Success
 import org.junit.Test
-import org.junit._
-
-import org.scalacheck._
-import org.scalacheck.Gen._
-import org.scalacheck.Arbitrary.arbitrary
-
-import org.specs.SpecsMatchers
-import org.specs.matcher.ScalaCheckMatchers
+import org.specs2.mutable.Specification
+import com.sun.xml.internal.bind.v2.model.runtime.RuntimeClassInfo
 
 
-class TypeCheckTests extends SpecsMatchers with ScalaCheckMatchers {
+
+class TypeCheckTests extends  Specification{
   @Test
   def thingsThatShouldntCompile {
     val compiler = new Compiler
@@ -45,28 +45,16 @@ class TypeCheckTests extends SpecsMatchers with ScalaCheckMatchers {
     case class TestPirate(state: Option[String])
     SVenueTest where (_.name eqs "test") selectCase(_.name,((x: Option[String]) => TestPirate(x))) selectCase(_.name,((x: Option[String]) => TestPirate(x)))
               """,shouldTypeCheck=false)
-
-    check("""
-          val params: Map[String, Any] = Map("lat" -> -31.1, "lon" -> 74.0, "weight" -> 2000, "weight2" -> 0.03)
-          ESimpleGeoPanda where (_.name eqs "test") scoreBoostField(_.point recipSqeGeoDistance(40, -74, 1, 5000, 1))
-          """,shouldTypeCheck=true)
-
-    check("""
-          val params: Map[String, Any] = Map("lat" -> -31.1, "lon" -> 74.0, "weight" -> 2000, "weight2" -> 0.03)
-          ESimpleGeoPanda where (_.name eqs "test")  customScore("distance_score_magic", params)
-          """,shouldTypeCheck=true)
-
-    check("""
-          val params: Map[String, Any] = Map("lat" -> -31.1, "lon" -> 74.0, "weight" -> 2000, "weight2" -> 0.03)
-          ESimpleGeoPanda where (_.name eqs "test") scoreBoostField(_.point recipSqeGeoDistance(40, -74, 1, 5000, 1)) customScore("distance_score_magic", params)
-          """,shouldTypeCheck=false)
+    
  }
 
   //Stolen from Rogue
   class Compiler {
     import java.io.{PrintWriter, Writer}
     import scala.io.Source
-    import scala.tools.nsc.{Interpreter, InterpreterResults, Settings}
+    import scala.tools.nsc.Settings
+    import scala.tools.nsc.interpreter.IMain
+    import scala.tools.nsc.interpreter.Results._
 
     class NullWriter extends Writer {
       override def close() = ()
@@ -75,7 +63,7 @@ class TypeCheckTests extends SpecsMatchers with ScalaCheckMatchers {
     }
 
     private val settings = new Settings
-    val loader = manifest[SVenueTest].erasure.getClassLoader
+    val loader = scala.reflect.classTag[SVenueTest].runtimeClass.getClassLoader
     settings.classpath.value = Source.fromURL(loader.getResource("app.class.path")).mkString
     settings.bootclasspath.append(Source.fromURL(loader.getResource("boot.class.path")).mkString)
     settings.deprecation.value = true // enable detailed deprecation warnings
@@ -83,7 +71,7 @@ class TypeCheckTests extends SpecsMatchers with ScalaCheckMatchers {
 
     // This is deprecated in 2.9.x, but we need to use it for compatibility with 2.8.x
     private val interpreter =
-      new Interpreter(
+      new IMain(
         settings,
         /*
          * It's a good idea to comment out this second parameter when adding or modifying
@@ -98,9 +86,9 @@ class TypeCheckTests extends SpecsMatchers with ScalaCheckMatchers {
 
     def typeCheck(code: String): Boolean = {
       interpreter.interpret(code) match {
-        case InterpreterResults.Success => true
-        case InterpreterResults.Error => false
-        case InterpreterResults.Incomplete => throw new Exception("Incomplete code snippet")
+        case Success => true
+        case Error => false
+        case Incomplete => throw new Exception("Incomplete code snippet")
       }
     }
   }

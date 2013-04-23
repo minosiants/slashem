@@ -7,7 +7,7 @@ import com.foursquare.slashem.Ast._
 import java.util.ArrayList
 import java.util.concurrent.TimeUnit
 import net.liftweb.record.Record
-import scalaj.collection.Imports._
+import scala.collection.JavaConverters._
 
 // Phantom types
 /** Used for an Ordered query */

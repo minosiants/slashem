@@ -1,23 +1,14 @@
 package com.foursquare.slashem
 
-import com.foursquare.slashem._
+import org.bson.types.ObjectId
+import org.junit.Assert
+import org.junit.Test
+import org.specs2.mutable.Specification
 
 import net.liftweb.common.Full
 
-import org.bson.types.ObjectId
-import org.junit.Test
-import org.junit._
 
-import org.scalacheck._
-import org.scalacheck.Gen._
-import org.scalacheck.Arbitrary.arbitrary
-
-import org.specs.SpecsMatchers
-import org.specs.matcher.ScalaCheckMatchers
-import java.util.HashMap
-
-
-class ParseTest extends SpecsMatchers with ScalaCheckMatchers {
+class ParseTest extends  Specification {
   //This is the test for the extraction code.
   @Test
   def testParseVenueFields {
